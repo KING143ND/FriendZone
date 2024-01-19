@@ -1,0 +1,162 @@
+{% load static %}
+{% load socialaccount %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="..." crossorigin="anonymous">
+  <link rel="shortcut icon" href="{% static 'assets/FriendZone.png' %}" type="image/x-icon" />
+  <script src="https://kit.fontawesome.com/fc1e235b2e.js"></script>
+  <link rel="stylesheet" href="{% static 'assets/style.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <!-- Bootstrap CSS -->
+  <!-- Bootstrap JS and Popper.js (required for Bootstrap) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="..." crossorigin="anonymous"></script>
+  <!-- jQuery (optional, required for the toggle functionality) -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="..." crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="sweetalert2.min.js"></script>
+  <link rel="stylesheet" href="sweetalert2.min.css">
+  <title>FriendZone | Register</title>
+  <style>
+    a {
+      text-decoration:none;
+    }
+    .site-title {
+      font-size:50px;
+      margin: 0 0 -8px 0;
+    }
+    .mode {
+      margin: 0 0 5px -40px;
+    }
+  </style>
+</head>
+
+<body>
+  {% for message in messages %}
+  <style>
+      .sweet_alert {
+          border: 4px solid rgb(0, 0, 0);
+          border-radius: 16px;
+      }
+      .text-error {
+          color:#dc3545;
+      }
+  </style>
+  <script>
+      const swalWithBootstrapButtons = Swal.mixin({
+          customClass: {
+              confirmButton: "px-4 btn btn-primary rounded rounded-3",
+              popup: "sweet_alert bg-body-tertiary p-4 text-reset",
+              title: "fw-normal fs-1 p-0 text-{{ message.tags }} text-capitalize",
+          },
+          buttonsStyling: false
+      });
+      swalWithBootstrapButtons.fire({
+          title: '{{ message.tags }}',
+          html: '<span class="fs-3 m-0 text-reset">{{ message }}</span>',
+          confirmButtonText: 'OK', 
+      });
+  </script>    
+  {% endfor %}
+  <div id="wrapper">
+    <div class="container">
+      <div class="phone-app-demo"></div>
+      <div class="form-data">
+        <form action="" method="POST" class="px-4 mx-4 border border-2">
+          {% csrf_token %}
+          <div class="logo">
+            <h1 class="site-title">FriendZone
+            </h1>
+            <div class="form-check form-switch mode">
+              <input class="form-check-input visually-hidden" type="checkbox" id="darkModeToggle">
+              <label class="form-check-label fs-3" style='cursor: pointer;' for="darkModeToggle">
+                <i class="fas fa-sun" id="sunIcon"></i>
+                <i class="fas fa-moon" id="moonIcon"></i>
+                <small> Dark Mode</small>
+              </label>
+            </div>  
+            <h4 class="px-4 text-secondary">Sign up to see photos and videos from your friends.</h4><br>
+          </div>
+          
+          {{form.username}}
+          {{form.fullname}}
+          {{form.email}}
+          {{form.password1}}
+          {{form.password2}}
+
+          <p class='mx-2'>People who use our service may have uploaded your contact information to FriendZone. <a href="https://www.facebook.com/help/instagram/261704639352628" target="_blank">Learn More</a></p>
+          <p class='mx-2'>By signing up, you agree to our Terms , <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener noreferrer">Privacy Policy </a>and <a href="https://privacycenter.instagram.com/policies/cookies/" target="_blank" rel="noopener noreferrer">Cookies Policy .</a></p>
+          <button class="form-btn mx-4" type="submit">Sign up</button>
+          <span class="has-separator">Or</span>
+          <a class="facebook-login" href="{% provider_login_url 'google' %}">
+            <i class="fab fa-google"></i> Log in with Google
+          </a>
+        </form>
+        <div class="sign-up mx-4 border border-2">
+          Have an account? <a href="{% url 'sign-in' %}">Log In</a>
+        </div>
+        <div class="get-the-app mb-4">
+          <span>Get the app.</span>
+          <div class="badges">
+            <img src="{% static 'assets/images/app-store.png' %}" alt="app-store badge">
+            <img src="{% static 'assets/images/google-play.png' %}" alt="google-play badge">
+            <br>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+</body>
+<script>
+  $(document).ready(function () {
+    const darkModeToggle = $('#darkModeToggle');
+    const sunIcon = $('#sunIcon');
+    const moonIcon = $('#moonIcon');
+
+    // Check if the user has a preference saved in local storage
+    const darkModeEnabled = localStorage.getItem('darkMode') === 'enabled';
+
+    // Set the theme based on the user's preference
+    if (darkModeEnabled) {
+      enableDarkMode();
+    } else {
+      disableDarkMode();
+    }
+
+    // Toggle dark mode when the checkbox is clicked
+    darkModeToggle.change(function () {
+      if ($(this).is(':checked')) {
+        enableDarkMode();
+      } else {
+        disableDarkMode();
+      }
+    });
+
+    function enableDarkMode() {
+      $('html').attr('data-bs-theme', 'dark');
+      sunIcon.hide();
+      moonIcon.show();
+      localStorage.setItem('darkMode', 'enabled');
+    }
+
+    function disableDarkMode() {
+      $('html').removeAttr('data-bs-theme');
+      sunIcon.show();
+      moonIcon.hide();
+      localStorage.setItem('darkMode', 'disabled');
+    }
+  });
+</script>
+
+</html>

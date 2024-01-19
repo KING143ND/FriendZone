@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block 'title' %}FriendZone - Edit Profile{% endblock 'title' %}
+{% block content %}
+<br><br>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://kit.fontawesome.com/fc1e235b2e.js"></script>
+  
+</head>
+
+<body>
+
+  <div id="wrapper">
+    <div class="container">
+      <div class="phone-app-ddemo"></div>
+      <div class="form-data">
+        <form action="" method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+          <div class="logo mt-2">
+            <h3 style="padding: 0px; font-size: 20px;">Edit Profile</h3><hr>
+          </div>
+          {{form.image}} 
+		  {{form.first_name}} 
+		  {{form.last_name}} 
+		  {{form.bio}} 
+		  {{form.location}} 
+		  {{form.url}} 
+          <button class="form-btn bg-primary" type="submit">Update Profile</button>
+          <!-- <a href="index.html" class="form-btn" type="submit">Log in</a> -->
+          
+        </form>
+        <br>
+        <br>
+      </div>
+    </div>
+
+    
+
+  </div>
+
+</body>
+
+</html>
+{% endblock content %}

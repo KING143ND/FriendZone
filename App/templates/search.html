@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block 'title' %}FriendZone - Search Users{% endblock 'title' %}
+{% block content %}
+<br><br>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://kit.fontawesome.com/fc1e235b2e.js"></script>
+</head>
+
+<body>
+
+  <div id="wrapper">
+    <div class="container">
+      <div class="phone-app-ddemo"></div>
+      <div class="form-data">
+        <form action="" method="POST" enctype="multipart/form-data" class='mb-4'>
+          <div class="logo">
+            <h3>Search Results</h3><hr>
+          </div>
+          {% if users|length == 0 %}
+          <p>No Results Found</p>
+          <p>{{users.username}}</p>
+          {% endif %}
+          <div class="container mx-auto">
+            <div class="row align-items-center">
+                <div class="side-menu__suggestions-content">
+                  {% for user in users %}
+                    <div class="side-menu__user-profil p-4 border border-2 rounded rounded-5 mb-3" style="text-align: start;">
+                      <div class="side-menu__suggestion">
+                          <a href="{% url 'profile' user %}" class="side-menu__suggestion-avatar">
+                              <img src="{{user.profile.image.url}}" alt="User Picture">
+                          </a>
+                          
+                          <div class="side-menu__suggestion-info fs-5">
+                              {% if user.profile.first_name %}
+                              <a style='text-decoration:none;' href="{% url 'profile' user %}">{{user.profile.first_name|title}} {{user.profile.last_name|title}}
+                                {% if user.profile.is_celebrity %}
+                                        <svg aria-label="Verified" class="d-inline" fill="rgb(0, 149, 246)" height="12" role="img" viewBox="0 0 40 40" width="12"><title>Verified</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>
+                                    {% endif %}
+                              </a>
+                              {% else %}
+                              <a href="{% url 'profile' user %}">{{user.username}}</a>
+                              {% endif %}
+                              <span class='text-muted'>{{user.username}}</span>
+                          </div>
+                          {% if user in request.user.profile.follower_list.all %}
+                            <a href="{% url 'follow' user 0 %}" class="btn btn-secondary rounded rounded-3 mx-2">Following</a>
+                          {% elif user == request.user %}
+                            <a href="{% url 'profile' user %}" class="btn btn-primary rounded rounded-3 mx-2">View Profile</a>
+                          {% else %}
+                            <a href="{% url 'follow' user 1 %}" class="btn btn-primary rounded rounded-3 mx-2">Follow</a>
+                          {% endif %}
+                      </div>
+                    </div>
+                  {% endfor %}
+                  
+              </div>
+            </div>
+        </div>
+        
+        
+          <br>
+        </form>
+        
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>
+{% endblock content %}
