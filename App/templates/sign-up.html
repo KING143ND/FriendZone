@@ -95,7 +95,8 @@
           <p class='mx-2'>By signing up, you agree to our Terms , <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener noreferrer">Privacy Policy </a>and <a href="https://privacycenter.instagram.com/policies/cookies/" target="_blank" rel="noopener noreferrer">Cookies Policy .</a></p>
           <button class="form-btn mx-4" type="submit">Sign up</button>
           <span class="has-separator">Or</span>
-          <a class="facebook-login" href="{% provider_login_url 'google' %}">
+          {% comment %} <a class="facebook-login" href="{% provider_login_url 'google' %}"> {% endcomment %}
+          <a class="facebook-login" href="#">
             <i class="fab fa-google"></i> Log in with Google
           </a>
         </form>
