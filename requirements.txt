@@ -7,7 +7,7 @@ crispy-bootstrap5==2023.10
 cryptography==41.0.7
 defusedxml==0.7.1
 dj-database-url==2.1.0
-Django==5.0
+Django==4.2
 django-allauth==0.60.0
 django-bootstrap4==23.4
 django-bootstrap5==23.4
@@ -17,6 +17,8 @@ hstspreload==2024.1.5
 idna==3.6
 oauthlib==3.2.2
 pillow==10.2.0
+psycopg-binary==3.1.17
+psycopg2-binary==2.9.9
 pycparser==2.21
 PyJWT==2.8.0
 python3-openid==3.2.0

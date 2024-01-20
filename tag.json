@@ -1,0 +1,82 @@
+[
+    {
+        "model": "App.tag",
+        "pk": 1,
+        "fields": {
+            "title": "first",
+            "slug": "5aacb79f-accc-11ee-97e6-5414f3b5ff53"
+        }
+    },
+    {
+        "model": "App.tag",
+        "pk": 2,
+        "fields": {
+            "title": "green",
+            "slug": "32f3219b-ad39-11ee-9721-088fc30d5a96"
+        }
+    },
+    {
+        "model": "App.tag",
+        "pk": 3,
+        "fields": {
+            "title": "2",
+            "slug": "bc6c82b6-ad68-11ee-80ea-088fc30d5a96"
+        }
+    },
+    {
+        "model": "App.tag",
+        "pk": 4,
+        "fields": {
+            "title": "3",
+            "slug": "57c80b21-ad6e-11ee-9cc9-088fc30d5a96"
+        }
+    },
+    {
+        "model": "App.tag",
+        "pk": 5,
+        "fields": {
+            "title": "4",
+            "slug": "6c25b87b-ad71-11ee-ab55-088fc30d5a96"
+        }
+    },
+    {
+        "model": "App.tag",
+        "pk": 6,
+        "fields": {
+            "title": "red",
+            "slug": "469dca7e-afa3-11ee-9805-5414f3b5ff53"
+        }
+    },
+    {
+        "model": "App.tag",
+        "pk": 7,
+        "fields": {
+            "title": "first post",
+            "slug": "f6dda447-b525-11ee-bbde-d2cf2ed430d9"
+        }
+    },
+    {
+        "model": "App.tag",
+        "pk": 8,
+        "fields": {
+            "title": "second post",
+            "slug": "baa9b50a-b526-11ee-a2b7-d2cf2ed430d9"
+        }
+    },
+    {
+        "model": "App.tag",
+        "pk": 9,
+        "fields": {
+            "title": "third post",
+            "slug": "e9b320b1-b526-11ee-b8b4-d2cf2ed430d9"
+        }
+    },
+    {
+        "model": "App.tag",
+        "pk": 10,
+        "fields": {
+            "title": "fourth post",
+            "slug": "187c0376-b527-11ee-84a9-d2cf2ed430d9"
+        }
+    }
+]
