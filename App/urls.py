@@ -27,6 +27,4 @@ urlpatterns = [
     path('favourite/<uuid:post_id>/', favourite, name='favourite'),
     path('add_comment/<uuid:post_id>/', add_comment, name='add_comment'),
     path('get_comments/<uuid:post_id>/', get_comments, name='get_comments'),
-    path('accounts/', include('allauth.urls')), 
-    path('accounts/', include('allauth.socialaccount.urls')),
 ]

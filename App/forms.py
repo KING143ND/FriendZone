@@ -5,6 +5,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
+from django.core.exceptions import ValidationError
+
 
 class EditProfileForm(forms.ModelForm):
     image = forms.ImageField(required=True)
@@ -28,6 +30,7 @@ class EditProfileForm(forms.ModelForm):
 class UsernameValidator(RegexValidator):
     regex = r'^[\w.]+$'
     message = _('Username can only includes letters, numbers, underscores and full stops.')
+    
 class UserRegisterForm(UserCreationForm):
     username = forms.CharField(
         validators=[UsernameValidator()],
@@ -59,26 +62,28 @@ class UserRegisterForm(UserCreationForm):
         self.request = kwargs.pop('request', None)
         super(UserRegisterForm, self).__init__(*args, **kwargs)
             
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username == 'admin':
+            raise ValidationError(_('This username is not accepted please choose another!'))
+        return username.lower()
+        
     def clean_fullname(self):
         fullname = self.cleaned_data.get('fullname')
-
+        if not fullname:
+            raise ValidationError(_('Full name is required.'))
         if ' ' not in fullname:
-            messages.error(self.request, _('Please enter both first name and last name with a space.'))
-
+            raise ValidationError(_('Please enter both first name and last name with a space!'))
         return fullname.title()
     
     def save(self, commit=True):
         user = super().save(commit=False)
         fullname = self.cleaned_data.get('fullname')
-        
         first_name, last_name = fullname.split(' ', 1)
-
         user.first_name = first_name.title()
         user.last_name = last_name.title()
-
         if commit:
             user.save()
-
         return user
 
 class UserLoginForm(AuthenticationForm):

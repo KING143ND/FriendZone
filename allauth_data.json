@@ -1,1 +1,0 @@
-[{"model": "socialaccount.socialapp", "pk": 1, "fields": {"provider": "google", "provider_id": "django-auth", "name": "Google", "client_id": "754331904791-qgf6svlm90hqajcvapg0lqd1776bmp2r.apps.googleusercontent.com", "secret": "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", "key": "", "settings": {}, "sites": [2]}}]
