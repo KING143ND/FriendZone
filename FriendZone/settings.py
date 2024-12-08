@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django.contrib.sites',
     'crispy_bootstrap5',
-    
+    'apps.accounts',
+    'apps.posts',
+    'apps.notifications',
 ]
 
 MIDDLEWARE = [
@@ -157,3 +159,5 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
+
+AUTH_USER_MODEL = 'accounts.User'

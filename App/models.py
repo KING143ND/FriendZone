@@ -20,8 +20,9 @@ class CustomUser(models.Model):
         super().save(*args, **kwargs)
  
         
-def generate_slug():
-    return str(uuid.uuid1()) 
+
+
+
 class Tag(models.Model):
     title = models.CharField(max_length=75, verbose_name='Tag', blank=True)
     slug = models.SlugField(null=False, unique=True, default=generate_slug)
@@ -84,19 +85,7 @@ class Profile(models.Model):
                 img.save(self.image.path)
 
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        profile, _ = Profile.objects.get_or_create(user=instance)
-        profile.first_name = instance.first_name
-        profile.last_name = instance.last_name
-        profile.save()
 
-
-def save_user_profile(sender, instance, **kwargs):
-	instance.profile.save()
-post_save.connect(create_user_profile, sender=User)
-post_save.connect(save_user_profile, sender=User)
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
