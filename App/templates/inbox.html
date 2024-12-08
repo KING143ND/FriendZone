@@ -1,0 +1,290 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block 'title' %}FriendZone - Message {{active_direct}}{% endblock 'title' %}
+{% block content %}
+<head>
+
+	<style>
+.header {
+    display: none;
+}
+.navbar {
+    display: none;
+}
+.chat-online {
+    color: #34ce57
+}
+
+.chat-offline {
+    color: #e4606d
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    max-height: 800px;
+}
+
+.chat-message-left,
+.chat-message-right {
+    display: flex;
+    flex-shrink: 0
+}
+
+.chat-message-left {
+    margin-right: auto
+}
+
+.chat-message-right {
+    flex-direction: row-reverse;
+    margin-left: auto
+}
+.py-3 {
+    padding-top: 1rem!important;
+    padding-bottom: 1rem!important;
+}
+.px-4 {
+    padding-right: 1.5rem!important;
+    padding-left: 1.5rem!important;
+}
+.flex-grow-0 {
+    flex-grow: 0!important;
+}
+.border-top {
+    border-top: 1px solid #dee2e6!important;
+}
+.chat-container {
+	max-width: 600px;
+	margin: auto;
+	margin-top: 20px;
+}
+
+.chat-header {
+	background-color: #ffffff;
+	padding: 10px;
+	border-bottom: 1px solid #dee2e6;
+	text-align: center;
+}
+
+.chat-messages {
+	max-height: fit-content;
+	max-weight: 100vw;
+	overflow-y: auto;
+    margin:15px 0 50px 0;
+}
+
+.message {
+	padding: 10px;
+	margin: 5px;
+	border-radius: 8px;
+}
+
+.uimg {
+    max-width:40px;
+    max-height:40px;
+}
+
+
+@media (max-width: 767px) {
+    .uimg {
+        max-width:5vw;
+        max-height:5vw;
+    }
+    .udt {
+        font-size:2vw;
+    }
+    .chat-messages {
+        max-height: fit-content;
+        overflow-y: auto;
+        margin:15px 0 50px 0;
+    }    
+}
+	</style>
+</head>
+<br><br>
+<div
+			class="modal fade"
+			id="search2Modal"
+			tabindex="-1"
+			aria-labelledby="search2ModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header text-center">
+						<h1 class="modal-title fs-4 text-center">Search User</h1>
+						<button
+							type="button"
+							class="btn-close m-0"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body text-center">
+						<h3>Search User</h3>
+						<form action="{% url 'search-users' %}" method="GET">
+							<div class="p-4">
+								<input
+									type="text"
+									class="p-2 border border-2 rounded rounded-5"
+									placeholder="  Search"
+									name="q"
+									value="{{ request.GET.q }}"
+								/>
+								<button class="btn btn-primary rounded rounded-5" type="submit">
+									<i class="fa-solid fa-magnifying-glass"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+{% for direct in message_data %}
+{% if active_direct == direct.user.username %}
+<main class="conetent mt-2">
+    <div class="container mt-3">
+
+		<div class="text-start bg-body-tertiary" style='position: fixed;
+        z-index: 1;
+        width: -webkit-fill-available;
+        left: 0;
+        top: 0;'>
+            <div class="d-flex align-items-start pb-2 px-4" style='.hover { color:red;}'>
+				<a href="{% url "message" %}" class='text-reset' style='align-self: center;
+                        margin-right: 12px;'><i class="fa-solid fa-arrow-left-long fs-3 mt-2 text-reset"></i></a>
+                <a href="{% url 'profile' direct.user.username %}" class="list-group-item list-group-item-action border-0">
+                    <div class="badge bg-success float-right"></div>
+                    <div class="d-flex align-items-start mx- mt-2" style='.hover { color:red;}'>
+                        
+                        <img src="{{ direct.user.profile.image.url }}" class="rounded-circle me-2" alt="img" width="48" height="48">
+                        <div class="ms-2" style='align-self: center;'>
+                            <p class='fs-5' style='margin: 0;'>{{direct.user.profile.first_name}} {{direct.user.profile.last_name}}
+								{% if direct.user.profile.is_celebrity %}
+                                        <svg aria-label="Verified" class="d-inline" fill="rgb(0, 149, 246)" height="12" role="img" viewBox="0 0 40 40" width="12"><title>Verified</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>
+                                    {% endif %}
+							</p>
+                            <div class="small text-muted">
+                                {{direct.user.username}}
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+				</a>
+                
+            </div>
+        </h1>
+		<div>
+			<div class="row mx-0">
+				<div class="col">
+					<div class="position-relative">
+						<div class="chat-messages p-1">
+							{% if alldirect|length > 12 %}
+							
+							<div class='text-center fs-5'>
+								<button style='display: contents;' class='text-primary' id="viewMoreButton">View Older Message</button>
+							</div>
+							<div id="additionalMessages" style="display: none;">
+								{% for direct in moredirect|slice:"::-1" %}
+								{% if direct.body != 'newmessagefromdjango' %}
+								{% if direct.date|date:"d M, Y" == direct.date|date:"d M, Y" and not date_displayed %}
+								<p class="text-center text-muted small mt-2 mb-1">{{ direct.date|date:"F j, Y, g:i A" }}
+								</p>
+								{% endif %}
+									{% if direct.sender == request.user %}
+									<div class="chat-message-right pb-2">
+										<div class="flex-shrink-1 bg-primary rounded-5 py-2 px-4 text-white" style="
+										margin-top: auto;
+										margin-right: px;">
+											{{direct.body}}
+										</div>
+									</div>
+									{% else %}
+									<div class="chat-message-left pb-2">
+										<div style='align-self: end;'>
+											<img src="{{ direct.sender.profile.image.url }}" class="rounded-circle me-1 uimg" alt="img" width="40" height="40">
+										</div>
+										<div  class="flex-shrink-1 rounded-5 py-2 px-4 text-white" style="
+										margin-top: auto; background: #545050;">
+											{{direct.body}}
+										</div>
+									</div>
+									{% endif %}
+							{% endif %}
+								{% endfor %}
+							</div>
+							{% endif %}
+
+							{% for direct in directs|slice:"::-1" %}
+								{% if direct.body != 'newmessagefromdjango' %}
+									{% if direct.date|date:"d M, Y" == direct.date|date:"d M, Y" and not date_displayed %}
+									<p class="text-center text-muted small mt-2 mb-1">{{ direct.date|date:"F j, Y, g:i A" }}
+									</p>
+									{% endif %}
+										{% if direct.sender == request.user %}
+										<div class="chat-message-right pb-2">
+											<div class="flex-shrink-1 bg-primary rounded-5 py-2 px-4 text-white" style="
+											margin-top: auto;
+											margin-right: px;">
+												{{direct.body}}
+											</div>
+										</div>
+										{% else %}
+										<div class="chat-message-left pb-2">
+											<div style='align-self: end;'>
+												<img src="{{ direct.sender.profile.image.url }}" class="rounded-circle me-1 uimg" alt="img" width="40" height="40">
+											</div>
+											<div  class="flex-shrink-1 rounded-5 py-2 px-4 text-white" style="
+											margin-top: auto; background: #545050;">
+												{{direct.body}}
+											</div>
+										</div>
+										{% endif %}
+								{% endif %}
+							{% endfor %}
+						</div>
+					</div>
+						<div class="flex-grow-0 p-1 msg bg-body-tertiary" style='position: fixed;
+                        z-index: 3;
+                        width: -webkit-fill-available;
+                        left: 0;
+                        bottom: 0;'>
+							<form method="POST" action="{% url 'send-directs' %}">
+								{% csrf_token %}
+								<input type="hidden" name="to_user" id="" value="{{active_direct}}">
+								<div class="input-group">
+									<input name="body" type="text" class="form-control py-3 rounded rounded-5 px-4" placeholder="Message..." aria-describedby="inputGroup-sizing-l" oninput="toggleSendButton()">
+									<button class="btn bg-primary rounded rounded-5 px-4 ms-1" type="submit" id="sendButton" style="display: none;">Send</button>
+								</div>
+							</form>
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+{% endif %}
+{% endfor %}
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script>
+		function setPageAtBottom() {
+			window.scrollTo(0, document.body.scrollHeight);
+		  }
+	  
+		  // Attach the function to the window.onload event
+		window.onload = setPageAtBottom;
+		function toggleSendButton() {
+			var inputField = document.querySelector('input[name="body"]');
+			var sendButton = document.getElementById('sendButton');
+	
+			sendButton.style.display = inputField.value.trim() !== '' ? 'block' : 'none';
+		}
+		document.getElementById('viewMoreButton').addEventListener('click', function () {
+			document.getElementById('additionalMessages').style.display = 'block';
+			this.style.display = 'none';
+		});
+	</script>
+</html>
+{% endblock content %}

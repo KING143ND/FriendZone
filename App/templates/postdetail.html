@@ -1,0 +1,364 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block 'title' %}FriendZone - Post {{post.id}}{% endblock 'title' %}
+{% block content %}
+<head>
+    <style>
+        
+
+.date {
+    font-size: 11px
+}
+
+.comment-text {
+    font-size: 12px
+}
+
+.fs-12 {
+    font-size: 12px
+}
+
+.shadow-none {
+    box-shadow: none
+}
+
+.name {
+    color: #007bff
+}
+
+.cursor:hover {
+    color: blue
+}
+
+.cursor {
+    cursor: pointer
+}
+
+.textarea {
+    resize: none
+}
+    </style>
+</head>
+    <main class="main-container">
+        <section class="content-container">
+            <div class="contendt">
+
+
+                <div class="posts">
+
+                    <article class="post">
+                        <div class="post__header mt-3">
+                            <div class="post__profile">
+                                {% if post.user.profile.image %}
+                                <a href="{{post.user.username}}" class="post__avatar">
+                                    
+                                    <img src="{{post.user.profile.image.url}}" alt="User Picture">
+                                    
+                                </a>
+                                {% endif %}
+                                <div class="col">
+                                <a href="{% url "profile" post.user.username %}" class="post__user d-inline" style='text-decoration:none;'>{{post.user.profile.first_name}} {{post.user.profile.last_name}}</a><br>
+                                <p class="post-date d-inline text-muted">{{post.posted|date:'F j, Y'}}</p></div>
+                            </div>
+
+                            <button class="post__more-options">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="6.5" cy="11.5" r="1.5" fill="var(--text-dark)"/>
+                                    <circle cx="12" cy="11.5" r="1.5" fill="var(--text-dark)"/>
+                                    <circle cx="17.5" cy="11.5" r="1.5" fill="var(--text-dark)"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="post__content">
+                            <div class="post__medias">
+                                <a href="{% url 'post-details' post.id %}"><img class="post__media" src="{{ post.picture.url }}" alt="Post Content" style="width: 700px; max-height: 100%; object-fit: cover;"></a>
+                            </div>
+                        </div>
+
+                        <div class="post__footer">
+                            <div class="post__buttons">
+                                <button class="post__button text-reset fs-3" data-post-id="{{ post.id }}">
+                                    <i class="heart-icon fa-regular fa-heart"></i>
+                                    <i class="heart-icon fa-solid fa-heart"></i>
+                                </button>
+                                <a href="{% url 'post-details' post.id %}" class='text-reset fs-3 p-3' data-bs-toggle="modal"
+                                data-bs-target="#{{post.id}}"
+                                data-post-id="{{ post.id }}">
+                                    <i class="fa-regular fa-comment"></i>
+                                </a>
+                                <button class="tag text-reset fs-3" data-post-id="{{ post.id }}">
+                                    <i class="fa-regular fa-bookmark"></i>
+                                    <i class="fa-solid fa-bookmark"></i>
+                                </button>
+
+                                <div class="post__indicators"></div>
+
+                            </div>
+
+                            <div class="post__infos">
+                                <div class="post__likes">
+                                    <span class="like-count-message">
+                                        {% if post.likes == 0 %}
+                                            No likes
+                                        {% elif post.likes == 1 %}
+                                            1 like
+                                        {% else %}
+                                            {{post.likes}} likes
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="d-inline-flex gap-1">
+                                    <span class="comment-count">
+                                        <a class="text-muted" data-bs-toggle="modal" href="#{{post.id}}" role="button" aria-expanded="false" aria-controls="{{post.id}}">
+                                            {% if post.comment.all.count == 0 %}
+                                                No Comments
+                                            {% elif post.comment.all.count == 1 %}
+                                                View 1 Comment
+                                            {% else %}
+                                                View all {{post.comment.all.count}} Comments
+                                            {% endif %}
+                                        </a>
+                                    </span>
+                                </div>
+                                <div class="post__description">
+                                    <span>
+                                        
+                                        {{post.caption}}
+
+                                    </span>
+                                </div>
+                                <div class="post__description">
+                                    <div class="modal fade" id="{{post.id}}" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                            <div class="modal-content">
+                                                <div class="modal-header text-center">
+                                                    <h1 class="modal-title fs-4 text-center">Comments</h1>
+                                                    <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <h3>Add Your Comments</h3>
+                                                    <hr>
+                                                    <div class="container mt-1">
+                                                        <div class="d-flex justify-content-right row">
+                                                            <div class="col-12">
+                                                                <div class="d-flex flex-column comment-section">
+                                                                    
+                                                                    <form method="POST" action='{% url "add_comment" post.id %}'>
+                                                                        {% csrf_token %}
+                                                                        <div class="p-2">
+                                                                            <div class="d-flex flex-row align-items-start"><img class="rounded-circle me-2" src="{{request.user.profile.image.url}}" width="32" height="32"><input type="text" name="body" class="form-control p-2 me-2" aria-label="With textarea" placeholder="Add a comment..." required="" id="id_body"><button style='align-self: stretch;' class="px-3 btn btn-primary btn-sm shadow-none" type="submit">Post</button></div>
+                                                                        </div>
+                                                                    </form>   
+                                    
+                                                                    <div id="comments-container">
+                                                                        {% for comment in comments %}
+                                                                            {% if post.id == comment.post.id %}
+                                                                            <div class="p-2">
+                                                                                <div class="d-flex flex-row user-info">
+                                                                                    <img class="rounded-circle me-2" src="{{ comment.user.profile.image.url }}" width="40" height="40">
+                                                                                    <a href="{% url 'profile' comment.user %}" class="text-reset">
+                                                                                        <div class="d-flex flex-column text-start justify-content-start ml-2">
+                                                                                            <span class="name" style="text-align:left;">{{ comment.user.profile.first_name }} {{ comment.user.profile.last_name }}</span>
+                                                                                        </a>
+                                                                                            <p style='display: none;'>{{ comment.date|date:"M. d, Y, g:i a" }}</p>
+                                                                                            <small style='font-weight: 100;' class="date text-muted fs-6 font-normal">
+                                                                                                {% if comment.date|timesince == '0 minutes' %}
+                                                                                                    just now
+                                                                                                {% else %}
+                                                                                                {{ comment.date|timesince }} ago
+                                                                                                {% endif %}</small>
+                                                                                            <div class="" style='text-align:left;'>
+                                                                                                <p class="comment-text fs-5 mb-0">{{ comment.body }}</p>
+                                                                                            </div> 
+                                                                                        </div>
+                                                                                    
+                                                                                </div>
+                                                                            </div>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p style="font-size: 13px;">{% for tag in post.tags.all %}
+                                    <a href="{{ tag.get_absolute_url }}" style="text-decoration: none;">
+                                        #{{ tag }}
+                                    </a>
+                                    {% endfor %}
+                                </p>
+                                
+
+                                
+                            </div>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+    var prevPageUrl = document.referrer;
+
+    history.replaceState(null, document.title, prevPageUrl);
+        $(document).ready(function () {
+            function updateLikeButton(postId) {
+                var likeBtn = $('.post__button[data-post-id="' + postId + '"]');
+                var heartIconRegular = likeBtn.find('.fa-regular.fa-heart');
+                var heartIconSolid = likeBtn.find('.fa-solid.fa-heart');
+                var liked = localStorage.getItem('liked_' + postId);
+        
+                if (liked === 'true') {
+                    likeBtn.addClass('liked');
+                    heartIconRegular.hide();
+                    heartIconSolid.show();
+                    heartIconSolid.css('color', 'red');
+                } else {
+                    likeBtn.removeClass('liked');
+                    heartIconRegular.show();
+                    heartIconSolid.hide();
+                    heartIconRegular.css('color', '');
+                }
+            }
+            function updateTagButton(postId) {
+                var tagBtn = $('.tag[data-post-id="' + postId + '"]');
+                var tagIconRegular = tagBtn.find('.fa-regular.fa-bookmark');
+                var tagIconSolid = tagBtn.find('.fa-solid.fa-bookmark');    
+                var bookmark = localStorage.getItem('bookmark_' + postId);
+                
+                if (bookmark === 'true') {
+                    tagBtn.addClass('bookmark');
+                    tagIconSolid.show();
+                    tagIconRegular.hide();
+                    tagIconSolid.css('color', 'rgb(48, 155, 255)');
+                    
+                } else {
+                    tagBtn.removeClass('bookmark');
+                    tagIconRegular.show();
+                    tagIconSolid.hide();
+                    tagIconRegular.css('color', '');
+                }
+            }
+            $('.post__button').each(function () {
+                var postId = $(this).data('post-id');
+                updateLikeButton(postId);
+            });
+            $('.tag').each(function () {
+                var postId = $(this).data('post-id');
+                updateTagButton(postId);
+            });
+            // Handle like button click
+            $('.post__button').on('click', function (e) {
+                e.preventDefault();
+                var post_id = $(this).data('post-id');
+                var likeBtn = $(this);
+        
+                $.ajax({
+                    type: 'POST',
+                    url: '/like/' + post_id + '/',
+                    data: {},
+                    success: function (data) {
+                        // Toggle the 'liked' class on the like button
+                        likeBtn.toggleClass('liked', data.liked);
+        
+                        // Change the color of the heart icon based on the 'liked' state
+                        var heartIconRegular = likeBtn.find('.fa-regular.fa-heart');
+                        var heartIconSolid = likeBtn.find('.fa-solid.fa-heart');
+                        if (data.liked) {
+                            heartIconRegular.hide();
+                            heartIconSolid.show();
+                            heartIconSolid.css('color', 'rgb(255, 48, 64)'); // Change to your desired color
+                            localStorage.setItem('liked_' + post_id, 'true');
+                        } else {
+                            heartIconRegular.show();
+                            heartIconSolid.hide();
+                            heartIconRegular.css('color', ''); // Reset to the default color
+                            localStorage.setItem('liked_' + post_id, 'false');
+                        }
+        
+                        // Update the like count
+                        var likeCountSpan = likeBtn.closest('.post__footer').find('.like-count-message');
+                    likeCountSpan.html(data.current_likes === 0 ? 'No likes' : (data.current_likes === 1 ? '1 like' : data.current_likes + ' likes'));
+                    },
+                    error: function (error) {
+                        console.log("Error:", error);
+                    }
+                });
+            });
+            $('.tag').on('click', function (e) {
+                e.preventDefault();
+                var post_id = $(this).data('post-id');
+                var tagBtn = $(this);
+            
+                $.ajax({
+                    type: 'POST',
+                    url: '/favourite/' + post_id + '/',
+                    data: {},
+                    success: function (data) {
+                        tagBtn.toggleClass('bookmark', data.is_favourite);
+                        
+                        var tagIconRegular = tagBtn.find('.fa-regular.fa-bookmark');
+                        var tagIconSolid = tagBtn.find('.fa-solid.fa-bookmark');
+    
+                        if (data.is_favourite) {
+                            tagIconRegular.hide();
+                            tagIconSolid.show();
+                            tagIconSolid.css('color', 'rgb(48, 155, 255)');
+                            localStorage.setItem('bookmark_' + post_id, 'true');
+                        } else {
+                            tagIconRegular.show();
+                            tagIconSolid.hide();
+                            tagIconRegular.css('color', ''); 
+                            localStorage.setItem('bookmark_' + post_id, 'false');
+                        }
+            
+                    },
+                    error: function (error) {
+                        console.log("Error:", error);
+                    }
+                });
+            });
+            $('#{{post.id}}').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var post_id = button.data('post-id');
+                $('#commentForm').data('post-id', post_id);
+            });
+            $('#commentForm').on('submit', function (e) {
+                e.preventDefault();
+                var post_id = $('#commentForm').data('post-id');
+                var commentText = $('#commentText').val();
+        
+                $.ajax({
+                    type: 'POST',
+                    url: '/add_comment/' + post_id + '/',
+                    data: {
+                        body: commentText,
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            var commentsContainer = $('#comments-container');
+                            commentsContainer.html(data.comments);
+                            $('#commentText').val('');
+                            //$('#commentModal').modal('hide');  // Close the modal after updating comments
+                        } else {
+                            console.log('Error:', data.errors);
+                        }
+                    },
+                    error: function (error) {
+                        console.log("Error:", error);
+                    }
+                });
+            });
+        });
+    </script>
+    
+{% endblock content %}

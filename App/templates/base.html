@@ -1,0 +1,547 @@
+{% load static %} {% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>{% block 'title' %}FriendZone {% endblock 'title' %}</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="shortcut icon" href="{% static 'assets/FriendZone.png' %}" type="image/x-icon" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+			integrity="..."
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+		/>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="{% static 'assets/style.css' %}"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="{% static 'assets/style.css' %}"
+		/>
+		<script src="{% static 'assets/script.js' %}" defer></script>
+		<script src="https://kit.fontawesome.com/fc1e235b2e.js"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+			integrity="..."
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://code.jquery.com/jquery-3.6.4.min.js"
+			integrity="..."
+			crossorigin="anonymous"
+		></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    	<script src="sweetalert2.min.js"></script>
+    	<link rel="stylesheet" href="sweetalert2.min.css">
+		<style>
+			.mode {
+				cursor: pointer;
+			}
+			.form-switch {
+				padding-left: 2.5em;
+				padding: 0;
+				margin-left: -5px;
+			}
+			a {
+				text-decoration:none;
+			}
+			.btn-secondary {
+				background-color: rgb(84, 77, 77)!important;
+				border-color:transparent;
+			}
+		</style>
+	</head>
+
+	<body>
+	{% for message in messages %}
+    <style>
+        .sweet_alert {
+            border: 4px solid rgb(0, 0, 0);
+            border-radius: 16px;
+        }
+        .text-error {
+            color:#dc3545;
+        }
+    </style>
+    <script>
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "px-4 btn btn-primary rounded rounded-3",
+                popup: "sweet_alert bg-body-tertiary p-4 text-reset",
+                title: "fw-normal fs-1 p-0 text-{{ message.tags }} text-capitalize",
+            },
+            buttonsStyling: false
+        });
+        swalWithBootstrapButtons.fire({
+            title: '{{ message.tags }}',
+            html: '<span class="fs-3 m-0 text-reset">{{ message }}</span>',
+            confirmButtonText: 'OK', 
+        });
+    </script>    
+    {% endfor %}
+		<header class="bg-body-tertiary header">
+			<nav class="header__content">
+				<div class="header__buttons">
+					<a href="{% url 'index' %}" class="header__home text-reset">
+						<h1 class="site-title">FriendZone</h1>
+					</a>
+					<div class="form-check form-switch left-2">
+						<input
+							class="form-check-input visually-hidden"
+							type="checkbox"
+							id="darkModeToggle"
+						/>
+						<label class="form-check-label fs-3 mode" for="darkModeToggle">
+							<small class="fs-6"> Dark Mode</small>
+							<i class="fas fa-sun" id="sunIcon"></i>
+							<i class="fas fa-moon" id="moonIcon"></i>
+						</label>
+					</div>
+				</div>
+
+				<form action="{% url 'search-users' %}" method="GET">
+					<div class="header__search">
+						<input
+							type="text"
+							placeholder="Search "
+							name="q"
+							value="{{ request.GET.q }}"
+						/>
+						<button class="btn btn-primary ms-1 rounded rounded-5" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+						
+					</div>
+				</form>
+				<div class="header__buttons header__buttons--mobile">
+					<a
+						href="{% url 'show-notification' %}"
+						class="text-reset position-relative"
+						data-bs-toggle="modal"
+						data-bs-target="#notifyModal"
+					>
+						<i class="fa-solid fa-bell fs-3"></i>
+						{% if notifications|length != 0 %}
+							<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+								{{notifications|length}}
+							</span>
+						{% endif %}
+					</a>
+				</div>
+
+				<div class="header__buttons header__buttons--desktop text-reset">
+					<a
+						href="{% url 'newpost' %}"
+						data-bs-toggle="modal"
+						data-bs-target="#exampleModal"
+						class="text-reset fs-3"
+					>
+						<i class="fa-regular fa-square-plus fs-3"></i> </a
+					><br />
+					<a href="{% url 'index' %}" class="text-reset fs-3">
+						<i class="fa-solid fa-house"></i> </a
+					><br />
+					<a href="{% url 'message' %}" class="text-reset">
+						<i class="fa-brands fa-facebook-messenger fs-3"></i>
+						{% if total_unread != 0 %}
+							<span class="top-0 start-100 translate-middle badge rounded-pill bg-danger">
+								{{total_unread}}
+							</span>
+						{% endif %}
+					</a>
+					<a href="#"> </a>
+
+					<span>
+						<a
+							href="#"
+							class="text-reset position-relative"
+							data-bs-toggle="modal"
+							data-bs-target="#notifyModal"
+						>
+							<i class="fa-solid fa-bell fs-3"></i>
+							{% if notifications|length != 0 %}
+							<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+								{{notifications|length}}
+							</span>
+							{% endif %}
+						</a>
+					</span>
+
+					<a href="">
+						<button class="profile-button">
+							<div class="profile-button__border"></div>
+							<a href="{% url 'profile' request.user %}">
+								<div class="profile-button__picture">
+									<img
+										src="{{request.user.profile.image.url}}"
+										alt="User Picture"
+									/>
+								</div>
+							</a>
+						</button>
+					</a>
+				</div>
+			</nav>
+		</header>
+		<!-- Post Modal -->
+		<div
+			class="modal fade"
+			id="exampleModal"
+			tabindex="-1"
+			aria-labelledby="exampleModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header text-center">
+						<h1 class="modal-title fs-4">
+							Create New Post - @{{request.user}}
+						</h1>
+						<button
+							type="button"
+							class="btn-close m-0"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<div class="form-data">
+							<form
+								action="/newpost"
+								method="POST"
+								enctype="multipart/form-data"
+							>
+								{% csrf_token %}
+								<div class="logo">
+									<h3>Create New Post</h3>
+								</div>
+								<input
+									type="file"
+									name="picture"
+									accept="image/*"
+									required=""
+									id="id_picture"
+								/>
+								<input
+									type="text"
+									name="caption"
+									class="input border border-2"
+									placeholder="Caption"
+									id="id_caption"
+								/>
+								<input
+									type="text"
+									name="tags"
+									class="input border border-2"
+									placeholder="Tags | Separate with comma"
+									id="id_tags"
+								/>
+								<button class="form-btn bg-primary" type="submit">Post</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Search Modal -->
+		<div
+			class="modal fade"
+			id="searchModal"
+			tabindex="-1"
+			aria-labelledby="searchModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header text-center">
+						<h1 class="modal-title fs-4 text-center">Search User</h1>
+						<button
+							type="button"
+							class="btn-close m-0"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body text-center">
+						<h3>Search User</h3>
+						<hr>
+						<form action="{% url 'search-users' %}" method="GET">
+							<div class="pt-1 pb-3">
+								<input
+									type="text"
+									class="p-2 border border-2 rounded rounded-5"
+									placeholder="  Search..."
+									name="q"
+									value="{{ request.GET.q }}"
+								/>
+								<button class="btn btn-primary rounded rounded-5" type="submit">
+									<i class="fa-solid fa-magnifying-glass"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Notify Modal -->
+		<div class="modal fade" id="notifyModal" tabindex="-1" aria-labelledby="notifyModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header text-center">
+						<h1 class="modal-title fs-4 text-center">Notifications</h1>
+						<button
+							type="button"
+							class="btn-close m-0"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body text-center">
+						<div class="container" style='padding: 0;'>
+							<div class="phone-app-ddemo"></div>
+							<div class="form-data">
+							  <form action="" method="POST" enctype="multipart/form-data">
+								<div class="logo">
+								  <h3 style="font-size: 20px;">Notifications</h3><hr>
+								</div>
+								  {% if notifications|length == 0 %}
+								  <p class='m-0 fs-4'>Currently No Notifications for you!</p>
+								  {% else %}
+								  {% for notification in notifications %}
+									  {% if notification.notification_types == 1 %}
+										  <div class="alert alert-white alert-dismissible fade show border border-2 rounded rounded-5" role="alert">
+											  <div class="side-menu__user-profile">
+												  <a href="{% url 'profile' notification.sender.username %}" class="side-menu__user-avatar">
+													  {% if notification.sender.profile.image %}
+													  <img src="{{ notification.sender.profile.image.url }}" alt="User Picture">
+													  {% else %}
+													  <img src="{% static 'assets/default.jpg' %}" alt="User Picture">
+													  {% endif %}
+													</a>
+													<div class="side-menu__user-idnfo" style="text-align: start;">
+													  <a class='text-reset' href="{% url 'profile' notification.sender.username %}" style="font-size: 15px; text-align: center;">{{ notification.sender.profile.first_name|title }} {{ notification.sender.profile.last_name|title }}
+														{% if notification.sender.profile.is_celebrity %}
+															<svg aria-label="Verified" class="d-inline" fill="rgb(0, 149, 246)" height="12" role="img" viewBox="0 0 40 40" width="12"><title>Verified</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>
+														{% endif %}
+													  </a> <br>
+													  <p style="font-size: 13px; margin-bottom: 0px"><i class="fa-solid fa-thumbs-up" style="color: #1871ff;"></i> Liked your Picture</p> 
+													  <p class='text-muted' style="font-size: 10px; margin: 0;">{{ notification.date }}</p>
+												  </div>
+												  <a href="{% url 'post-details' notification.post.id %}" class="side-menu__user-avata" style="margin-left: 0px; max-width: 40px; position: relative; left: 5%;">
+													  <img src="{{ notification.post.picture.url }}" alt="User Picture">
+												  </a>
+											  </div>
+											  <a href="{% url 'delete-notification' notification.id %}" type="button" class="btn-close" style='z-index: 0!important;' data-bs-dismiss="alert" aria-label="Close"></a>
+											</div>
+									  {% endif %}
+									  {% if notification.notification_types == 3 %}
+											<div class="alert alert-white alert-dismissible fade show border border-2 rounded rounded-5" role="alert">
+											  <div class="side-menu__user-profile">
+												<a href="{% url 'profile' notification.sender.username %}" class="side-menu__user-avatar">
+													{% if notification.sender.profile.image %}
+													<img src="{{ notification.sender.profile.image.url }}" alt="User Picture">
+													{% else %}
+													<img src="{% static 'assets/default.jpg' %}" alt="User Picture">
+													{% endif %}
+												  </a>
+												  <div class="side-menu__user-idnfo" style="text-align: start;">
+													  <a class='text-reset' href="{% url 'profile' notification.sender.username %}" style="font-size: 15px; text-align: center;">{{ notification.sender.profile.first_name|title }} {{ notification.sender.profile.last_name|title }}
+														{% if notification.sender.profile.is_celebrity %}
+															<svg aria-label="Verified" class="d-inline" fill="rgb(0, 149, 246)" height="12" role="img" viewBox="0 0 40 40" width="12"><title>Verified</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>
+														{% endif %}
+													  </a> <br>
+													  <p style="font-size: 13px; margin: 0;"><i class="fa-solid fa-user" style="color: #2f9dd0;"></i> Follow your Profile</p>
+													  <p class='text-muted' style="font-size: 10px; margin: 0;">{{ notification.date }}</p>
+												  </div>
+											  </div>
+											  <a href="{% url 'delete-notification' notification.id %}" type="button" class="btn-close" style='z-index: 0!important;' data-bs-dismiss="alert" aria-label="Close"></a>
+											</div>
+									  {% endif %}
+									  {% if notification.notification_types == 2 %}
+										<div class="alert alert-white alert-dismissible fade show border border-2 rounded rounded-5" role="alert">
+											<div class="side-menu__user-profile">
+											<a href="{% url 'profile' notification.sender.username %}" class="side-menu__user-avatar">
+												{% if notification.sender.profile.image %}
+													<img src="{{ notification.sender.profile.image.url }}" alt="User Picture">
+												{% else %}
+													<img src="{% static 'assets/default.jpg' %}" alt="User Picture">
+												{% endif %}
+											</a>									   
+												<div class="side-menu__user-idnfo" style="text-align: start;">
+												<a class='text-reset fs-5' href="{% url 'profile' notification.sender.username %}">{{ notification.sender.profile.first_name|title }} {{ notification.sender.profile.last_name|title }}
+													{% if notification.sender.profile.is_celebrity %}
+														<svg aria-label="Verified" class="d-inline" fill="rgb(0, 149, 246)" height="12" role="img" viewBox="0 0 40 40" width="12"><title>Verified</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>
+													{% endif %}
+												</a> <br>
+												<p style="font-size: 13px; margin: 0;"><i class="bi bi-chat-dots-fill" style="color: rgb(252, 122, 1);"></i> Commented on your Post</p>
+												<p class='text-muted' style="font-size: 10px; margin: 0;">{{ notification.date }}</p>
+												</div>
+												<a href="{% url 'post-details' notification.post.id %}" class="side-menu__user-avata" style="margin-left: 0px; max-width: 40px; position: relative; left: 5%;">
+													<img src="{{ notification.post.picture.url }}" alt="User Picture">
+												</a>
+											</div>
+											<a href="{% url 'delete-notification' notification.id %}" type="button" class="btn-close" style='z-index: 0!important;' data-bs-dismiss="alert" aria-label="Close"></a>
+										</div>
+									  {% endif %}
+								  {% endfor %}
+								  <a class='text-primary fs-5' href="{% url 'show-notification' %}">See all</a>
+								  {% endif %}
+								</form>
+							</div>
+						  </div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{% block content %} {% endblock content %}
+
+		<nav class="navbar bg-body-tertiary">
+			<a href="/" class="navbar__button text-reset">
+				<i class="fa-solid fa-house fs-2"></i>
+			</a>
+			<a
+				href="{% url 'search-users'  %}"
+				class="navbar__button text-reset"
+				data-bs-toggle="modal"
+				data-bs-target="#searchModal"
+			>
+				<i class="fa-solid fa-magnifying-glass fs-2"></i>
+			</a>
+
+			<a
+				href="{% url 'newpost' %}"
+				class="navbar__button text-reset"
+				data-bs-toggle="modal"
+				data-bs-target="#exampleModal"
+			>
+				<i class="fa-regular fa-square-plus fs-2"></i>
+			</a>
+
+			{% comment %}
+			<a href="#" class="navbar__button text-reset">
+				<svg
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						fill-rule="evenodd"
+						clip-rule="evenodd"
+						d="M18 2.8H7C5.23269 2.8 3.8 4.23269 3.8 6V17C3.8 18.7673 5.23269 20.2 7 20.2H18C19.7673 20.2 21.2 18.7673 21.2 17V6C21.2 4.23269 19.7673 2.8 18 2.8ZM7 1C4.23858 1 2 3.23858 2 6V17C2 19.7614 4.23858 22 7 22H18C20.7614 22 23 19.7614 23 17V6C23 3.23858 20.7614 1 18 1H7Z"
+						fill="var(--text-dark)"
+					/>
+					<path
+						fill-rule="evenodd"
+						clip-rule="evenodd"
+						d="M22 7.99995H3V6.19995H22V7.99995Z"
+						fill="var(--text-dark)"
+					/>
+					<path
+						fill-rule="evenodd"
+						clip-rule="evenodd"
+						d="M10 6.99989L6 1.99989L7.57349 1.12573L11.5735 6.12573L10 6.99989Z"
+						fill="var(--text-dark)"
+					/>
+					<path
+						fill-rule="evenodd"
+						clip-rule="evenodd"
+						d="M16.5 6.99989L12.5 1.99989L14.0735 1.12573L18.0735 6.12573L16.5 6.99989Z"
+						fill="var(--text-dark)"
+					/>
+					<path
+						d="M15.75 13.0671C16.0833 13.2595 16.0833 13.7407 15.75 13.9331L10.5 16.9642C10.1667 17.1566 9.75 16.9161 9.75 16.5312L9.75 10.469C9.75 10.0841 10.1667 9.84354 10.5 10.036L15.75 13.0671Z"
+						fill="var(--text-dark)"
+					/>
+				</svg>
+			</a>
+			{% endcomment %}
+			
+			<a href="{% url 'message' %}" class="navbar__button text-reset">
+				<i class="fa-brands fa-facebook-messenger fs-2"></i>
+					{% if total_unread != 0 %}
+						<span class="top-0 start-100 translate-middle badge rounded-pill bg-danger">
+							{{total_unread}}
+						</span>
+					{% endif %}
+			</a>
+			<a
+				href="{% url 'profile' request.user %}"
+				class="navbar__button text-reset profile-button"
+			>
+				<div class="profile-button__border"></div>
+				<div class="profile-button__picture">
+					<img src="{{request.user.profile.image.url}}" alt="User Picture" />
+				</div>
+			</a>
+		</nav>
+	</body>
+	<!-- Bootstrap JS and Popper.js -->
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+		integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+		crossorigin="anonymous"
+	></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+		crossorigin="anonymous"
+	></script>
+	<script>
+		$(document).ready(function () {
+			const darkModeToggle = $("#darkModeToggle");
+			const sunIcon = $("#sunIcon");
+			const moonIcon = $("#moonIcon");
+
+			// Check if the user has a preference saved in local storage
+			const darkModeEnabled = localStorage.getItem("darkMode") === "enabled";
+
+			// Set the theme based on the user's preference
+			if (darkModeEnabled) {
+				enableDarkMode();
+			} else {
+				disableDarkMode();
+			}
+
+			// Toggle dark mode when the checkbox is clicked
+			darkModeToggle.change(function () {
+				if ($(this).is(":checked")) {
+					enableDarkMode();
+				} else {
+					disableDarkMode();
+				}
+			});
+
+			function enableDarkMode() {
+				$("html").attr("data-bs-theme", "dark");
+				sunIcon.hide();
+				moonIcon.show();
+				localStorage.setItem("darkMode", "enabled");
+			}
+
+			function disableDarkMode() {
+				$("html").removeAttr("data-bs-theme");
+				sunIcon.show();
+				moonIcon.hide();
+				localStorage.setItem("darkMode", "disabled");
+			}
+		});
+	</script>
+</html>

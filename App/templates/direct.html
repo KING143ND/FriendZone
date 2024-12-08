@@ -1,0 +1,174 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block 'title' %}FriendZone - Inbox{% endblock 'title' %}
+{% block content %}
+<head>
+
+	<style>
+
+.chat-online {
+    color: #34ce57
+}
+
+.chat-offline {
+    color: #e4606d
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    max-height: 800px;
+}
+
+.chat-message-left,
+.chat-message-right {
+    display: flex;
+    flex-shrink: 0
+}
+
+.chat-message-left {
+    margin-right: auto
+}
+
+.chat-message-right {
+    flex-direction: row-reverse;
+    margin-left: auto
+}
+.py-3 {
+    padding-top: 1rem!important;
+    padding-bottom: 1rem!important;
+}
+.px-4 {
+    padding-right: 1.5rem!important;
+    padding-left: 1.5rem!important;
+}
+.flex-grow-0 {
+    flex-grow: 0!important;
+}
+.border-top {
+    border-top: 1px solid #dee2e6!important;
+}
+.chat-container {
+	max-width: 600px;
+	margin: auto;
+	margin-top: 20px;
+}
+
+.chat-header {
+	background-color: #ffffff;
+	padding: 10px;
+	border-bottom: 1px solid #dee2e6;
+	text-align: center;
+}
+
+.message {
+	padding: 10px;
+	margin: 5px;
+	border-radius: 8px;
+}
+
+
+@media (max-width: 767px) {
+	.msg {
+		margin: 0 0 50px 0;
+	}
+}
+	</style>
+</head>
+<br><br>
+<div
+			class="modal fade"
+			id="search2Modal"
+			tabindex="-1"
+			aria-labelledby="search2ModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header text-center">
+						<h1 class="modal-title fs-4 text-center">Search User</h1>
+						<button
+							type="button"
+							class="btn-close m-0"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body text-center">
+						<h3>Search User</h3>
+						<form action="{% url 'search-users' %}" method="GET">
+							<div class="p-4">
+								<input
+									type="text"
+									class="p-2 border border-2 rounded rounded-5"
+									placeholder="  Search"
+									name="q"
+									value="{{ request.GET.q }}"
+								/>
+								<button class="btn btn-primary rounded rounded-5" type="submit">
+									<i class="fa-solid fa-magnifying-glass"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+<main class="conetent mt-4">
+    <div class="container mt-4">
+		<h1 class="h3 mb-2 text-center">Messages</h1><hr>
+		<div>
+			<div class="row">
+				<div class="col-12 border-right chat-messages mb-4" >
+					<div class="row">
+						<div class="col-12 px-4">
+							<div class=" align-items-center">
+								<div class="flex-grow-1">
+									<a href="{% url 'search-users' %}" class="btn btn-primary rounded rounded-5 mb-4" data-bs-toggle="modal"
+									data-bs-target="#search2Modal">New Message</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					{% if message_data|length == 0 %}
+						<p class='ms-2 fs-4'>Currently No Messages for you! Connect with Friends.</p>
+					{% else %}
+					{% for message in message_data %}
+					
+					<a href="{% url 'directs' message.user.username %}" class="list-group-item list-group-item-action border-0 {% if active_direct == message.user.username %}active{% endif %}" style='z-index: 0;'>
+						
+						<div class="d-flex align-items-start mb-4 ps-4">
+							
+								<img src="{{ message.user.profile.image.url }}" class="rounded-circle me-2" alt="img" width="48" height="48">
+							
+							<div class="mx-2 fs-5" style='align-self: center;'>
+								<p style='margin: 0;'>{{message.user.profile.first_name}} {{message.user.profile.last_name}}
+									{% if message.user.profile.is_celebrity %}
+                                        <svg aria-label="Verified" class="d-inline" fill="rgb(0, 149, 246)" height="12" role="img" viewBox="0 0 40 40" width="12"><title>Verified</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>
+                                    {% endif %}
+								</p>
+								
+								<div class="small text-muted fs-6">
+                                    Last Message: {{ message.last|date:"g:i A, j F Y" }}
+								</div>
+							</div>
+							{% if message.unread != 0 %}
+							<div class="badge bg-danger fs-6 rounded rounded-5 ms-4" style='align-self: center;'>{{message.unread}}</div>
+							{% endif %}
+						</div>
+					</a>
+					{% endfor %}
+					{% endif %}
+					<br>
+					<div><br></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</main>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</html>
+{% endblock content %}

@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block 'title' %}FriendZone - {{profile.first_name}} {{profile.last_name}}{% endblock 'title' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+</head>
+<body>
+    <div
+    class="modal fade"
+    id="followingModal"
+    tabindex="-1"
+    aria-labelledby="followingModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h1 class="modal-title fs-4 text-center">Following</h1>
+                <button
+                    type="button"
+                    class="btn-close m-0"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <h3 class='text-center'>Following</h3>
+                <hr>
+                <div class="side-menu__suggestions-section px-4" style='overflow: visible;'>
+                    <div class="side-menu__suggestions-content">
+                        {% if following|length == 0 %}
+                            <p class='fs-4'>
+                                {% if request.user == profile.user %}
+                                    You don't have any following yet! Connect with your friends.
+                                {% else %}
+                                    {{ profile.first_name }} {{ profile.last_name }} is not following anyone at the moment!
+                                {% endif %}
+                            </p>
+                        {% else %}
+                            {% for fname, lname, img, uname, isverified in following %}
+                                <div class="side-menu__suggestion mb-1">
+                                    <a href="{% url 'profile' uname %}" class="side-menu__suggestion-avatar">
+                                        <img src="/media/{{ img }}" alt="User Picture">
+                                    </a>
+                                    <div class="side-menu__suggestion-info me-3" style='justify-item:end;'>
+                                        <a class='fs-4' style='text-decoration:none;' href="{% url 'profile' uname %}">{{ fname|title }} {{ lname|title }}
+                                            {% if isverified == True %}
+                                        <svg aria-label="Verified" class="d-inline" fill="rgb(0, 149, 246)" height="12" role="img" viewBox="0 0 40 40" width="12"><title>Verified</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>
+                                    {% endif %}
+                                        </a>
+                                        <span class='text-muted fs-5'>{{ uname }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div
+			class="modal fade"
+			id="followerModal"
+			tabindex="-1"
+			aria-labelledby="followerModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header text-center">
+						<h1 class="modal-title fs-4 text-center">Followers</h1>
+						<button
+							type="button"
+							class="btn-close m-0"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<h3 class='text-center'>Followers</h3>
+						<hr>
+                        <div class="side-menu__suggestions-section px-4" style='overflow: visible;'>
+                            <div class="side-menu__suggestions-content">
+                                {% if follower|length == 0 %}
+                            <p class='fs-4'>
+                                {% if request.user == profile.user %}
+                                    You don't have any followers yet! Connect with your friends.
+                                {% else %}
+                                    {{ profile.first_name }} {{ profile.last_name }}  does not have any followers at the moment!
+                                {% endif %}
+                            </p>
+                        {% else %}
+                            {% for fname, lname, img, uname, isverified in follower %}
+                                <div class="side-menu__suggestion mb-1">
+                                    <a href="{% url 'profile' uname %}" class="side-menu__suggestion-avatar">
+                                        <img src="/media/{{ img }}" alt="User Picture">
+                                    </a>
+                                    <div class="side-menu__suggestion-info me-3" style='justify-item:end;'>
+                                        <a class='fs-4' style='text-decoration:none;' href="{% url 'profile' uname %}">{{ fname|title }} {{ lname|title }}
+                                            {% if isverified == True %}
+                                        <svg aria-label="Verified" class="d-inline" fill="rgb(0, 149, 246)" height="12" role="img" viewBox="0 0 40 40" width="12"><title>Verified</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>
+                                    {% endif %}
+                                        </a>
+                                        <span class='text-muted fs-5'>{{ uname }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                            </div>
+                        </div>
+					</div>
+				</div>
+			</div>
+		</div>
+    <header>
+        <br><br><br>
+        <div class="container">
+
+            <div class="profile">
+
+                <div class="profile-image">
+
+                    <img src="{{profile.image.url}}">
+
+                </div>
+
+                <div class="profile-user-settings">
+                        {% if profile.first_name %}
+                        <h6 class="profile-user-name">{{profile.first_name}} {{profile.last_name}}
+                            {% if profile.is_celebrity %}
+                                        <svg aria-label="Verified" class="d-inline" fill="rgb(0, 149, 246)" height="16" role="img" viewBox="0 0 40 40" width="16"><title>Verified</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>
+                                    {% endif %}
+                        </h6> <br>
+                        {% endif %}
+                        <h5 style="font-size: 15px;vertical-align: bottom;margin-bottom: 12px;" class="profile-user-name text-muted">{{profile.user.username}}</h5>
+
+                        {% if request.user.is_authenticated and request.user == profile.user %}
+                        <a style="text-decoration: none;" href="{% url 'editprofile' %}" class="btn profile-edit-btn btn-primary ms-2">Edit Profile</a>
+                        <a style="text-decoration: none;" href="{% url 'sign-out' %}" class="btn profile-edit-btn btn-secondary ms-2">Logout</a>
+                        
+                        {% endif %}
+                        {% if request.user.is_authenticated and request.user != profile.user %}
+                            {% if follow_status == True %}
+                                <a href="{% url 'follow' profile.user 0 %}" class="btn profile-edit-btn btn-secondary ms-2">Unfollow</a>
+                            {% else %}
+                                <a href="{% url 'follow' profile.user 1 %}" class="btn profile-edit-btn btn-primary ms-2">Follow</a>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if request.user.is_authenticated and request.user != profile.user %}
+                                <a href="{% url 'conversation' profile.user  %}" class="btn profile-edit-btn btn-danger ms-2">Message</a>
+                        {% endif %}
+                </div>
+
+                
+
+                <div class="profile-bio">
+                    <br>
+                    {% if profile.bio %}
+                    <p style='max-width: 300px;'><span class="profile-real-name"></span> {{profile.bio}}</p>
+                    {% endif %}
+                    {% comment %} {% if profile.location %}
+                    <p><span class="profile-real-name"></span> {{profile.location}}</p>
+                    {% endif %} {% endcomment %}
+                    {% if profile.url %}
+                    <p><span class="profile-real-name"></span> <a href="{{profile.url}}" target='_blank'><i class="fa-solid fa-link"></i> {{profile.url|cut:"http://"|cut:'https://'}}</a></p>
+                    {% endif %}
+                    <br>
+                    <div class="profile-user-settings mb-2" style="
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-evenly;
+                ">
+                        <a  href="{% url 'profile' profile.user %}"  class="btns profiele-edit-btn me-2 d-inline text-reset fs-3">Posts <i class="fa-solid fa-table-cells"></i></a>
+                        {% if request.user == profile.user %}
+                        <a  href="{% url 'profilefavourite' profile.user %}"  class="btns profeile-edit-btn d-inline text-reset fs-3">Saved <i class="fa-regular fa-bookmark"></i></a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="profile-stats">
+
+                    <ul>
+                        <li style='cursor: default;'><span class="profile-stat-count">{{posts_count}}</span> posts</li>
+                        <li data-bs-toggle="modal"
+						data-bs-target="#followerModal"><a class="profile-stat-count text-reset">{{followers_count}}</a> followers</li>
+                        <li data-bs-toggle="modal"
+						data-bs-target="#followingModal"><a class="profile-stat-count text-reset">{{following_count}}</a> following</li>
+                    </ul>
+                    <br>
+                    
+                </div>
+
+            </div>
+            <!-- End of profile section -->
+
+        </div>
+        <!-- End of container -->
+
+    </header>
+    
+    <main class='mb-4' style='margin: -30px 0 0 0;'>
+
+        <div class="container mb-4 mb-4">
+            <div class="gallery">
+                {% if posts|length == 0 %}
+                    {% if request.user == profile.user %}
+                        {% if saved == 'true' %}
+                            <p class='text-center fs-3'>You haven't added any Saved posts yet!</p>
+                        {% else %}
+                            <p class='text-center fs-3'>You haven't published any posts yet. Start sharing your thoughts and experiences!</p>
+                        {% endif %}
+                    {% else %}
+                    <p class='text-center fs-3'>{{ profile.first_name }} {{ profile.last_name }} has not published any posts at the moment! Start sharing your thoughts and experiences.</p>
+                    {% endif %}
+                {% endif %}
+                
+                {% for post in posts %}
+                <a href="{% url "post-details" post.id %}" style='max-width: 500px;'><div class="gallery-item" tabindex="0">
+
+                    <img src="{{ post.picture.url }}" class="gallery-image" alt="" style="width: 500px; height: 300px; object-fit: cover;">
+                    {% comment %} {% if post.picture %}
+                        <img src="{{ post.picture.url }}" class="gallery-image" alt="" style="width: 500px; height: 300px; object-fit: cover;">
+                    {% else %}
+                        <p>No image available</p>
+                    {% endif %} {% endcomment %}
+
+                    <div class="gallery-item-info">
+
+                        <ul>
+                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> {{post.likes}}</li>
+                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> {{post.comment.count}}</li>
+                        </ul>
+
+                    </div>
+
+                </div></a>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+    <script>
+        if (window.history && window.history.pushState) {
+            window.addEventListener('popstate', function() {
+                location.reload();
+            });
+        }
+    </script>
+    {% endblock content %}
